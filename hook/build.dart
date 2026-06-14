@@ -13,7 +13,9 @@ void main(List<String> args) async {
       // final libPath = Uri.file(
       //   '/home/thancoder/projects/cpp_projects/ffmpeg_lib/build/libmyffmpeg.so',
       // );
-      final libPath = config.packageRoot.resolve('src/libmyffmpeg.so');
+      final libPath = config.packageRoot.resolve(
+        'src/ffmpeg_cpp_wrapper/build/libmyffmpeg.so',
+      );
 
       if (!await File.fromUri(libPath).exists()) {
         throw Exception(

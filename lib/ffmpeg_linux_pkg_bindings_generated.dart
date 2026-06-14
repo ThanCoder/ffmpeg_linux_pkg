@@ -3758,6 +3758,197 @@ external void sws_convertPalette8ToPacked24(
   ffi.Pointer<ffi.Uint8> palette,
 );
 
+/// Return the LIBAVDEVICE_VERSION_INT constant.
+@ffi.Native<ffi.UnsignedInt Function()>()
+external int avdevice_version();
+
+/// Return the libavdevice build-time configuration.
+@ffi.Native<ffi.Pointer<ffi.Char> Function()>()
+external ffi.Pointer<ffi.Char> avdevice_configuration();
+
+/// Return the libavdevice license.
+@ffi.Native<ffi.Pointer<ffi.Char> Function()>()
+external ffi.Pointer<ffi.Char> avdevice_license();
+
+/// Initialize libavdevice and register all the input and output devices.
+@ffi.Native<ffi.Void Function()>()
+external void avdevice_register_all();
+
+/// Audio input devices iterator.
+///
+/// If d is NULL, returns the first registered input audio/video device,
+/// if d is non-NULL, returns the next registered input audio/video device after d
+/// or NULL if d is the last one.
+@ffi.Native<ffi.Pointer<AVInputFormat> Function(ffi.Pointer<AVInputFormat>)>()
+external ffi.Pointer<AVInputFormat> av_input_audio_device_next(
+  ffi.Pointer<AVInputFormat> d,
+);
+
+/// Video input devices iterator.
+///
+/// If d is NULL, returns the first registered input audio/video device,
+/// if d is non-NULL, returns the next registered input audio/video device after d
+/// or NULL if d is the last one.
+@ffi.Native<ffi.Pointer<AVInputFormat> Function(ffi.Pointer<AVInputFormat>)>()
+external ffi.Pointer<AVInputFormat> av_input_video_device_next(
+  ffi.Pointer<AVInputFormat> d,
+);
+
+/// Audio output devices iterator.
+///
+/// If d is NULL, returns the first registered output audio/video device,
+/// if d is non-NULL, returns the next registered output audio/video device after d
+/// or NULL if d is the last one.
+@ffi.Native<ffi.Pointer<AVOutputFormat> Function(ffi.Pointer<AVOutputFormat>)>()
+external ffi.Pointer<AVOutputFormat> av_output_audio_device_next(
+  ffi.Pointer<AVOutputFormat> d,
+);
+
+/// Video output devices iterator.
+///
+/// If d is NULL, returns the first registered output audio/video device,
+/// if d is non-NULL, returns the next registered output audio/video device after d
+/// or NULL if d is the last one.
+@ffi.Native<ffi.Pointer<AVOutputFormat> Function(ffi.Pointer<AVOutputFormat>)>()
+external ffi.Pointer<AVOutputFormat> av_output_video_device_next(
+  ffi.Pointer<AVOutputFormat> d,
+);
+
+/// Send control message from application to device.
+///
+/// @param s         device context.
+/// @param type      message type.
+/// @param data      message data. Exact type depends on message type.
+/// @param data_size size of message data.
+/// @return >= 0 on success, negative on error.
+/// AVERROR(ENOSYS) when device doesn't implement handler of the message.
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<AVFormatContext>,
+    ffi.UnsignedInt,
+    ffi.Pointer<ffi.Void>,
+    ffi.Size,
+  )
+>(symbol: 'avdevice_app_to_dev_control_message')
+external int _avdevice_app_to_dev_control_message(
+  ffi.Pointer<AVFormatContext> s,
+  int type,
+  ffi.Pointer<ffi.Void> data,
+  int data_size,
+);
+
+int avdevice_app_to_dev_control_message(
+  ffi.Pointer<AVFormatContext> s,
+  AVAppToDevMessageType type,
+  ffi.Pointer<ffi.Void> data,
+  int data_size,
+) => _avdevice_app_to_dev_control_message(s, type.value, data, data_size);
+
+/// Send control message from device to application.
+///
+/// @param s         device context.
+/// @param type      message type.
+/// @param data      message data. Can be NULL.
+/// @param data_size size of message data.
+/// @return >= 0 on success, negative on error.
+/// AVERROR(ENOSYS) when application doesn't implement handler of the message.
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<AVFormatContext>,
+    ffi.UnsignedInt,
+    ffi.Pointer<ffi.Void>,
+    ffi.Size,
+  )
+>(symbol: 'avdevice_dev_to_app_control_message')
+external int _avdevice_dev_to_app_control_message(
+  ffi.Pointer<AVFormatContext> s,
+  int type,
+  ffi.Pointer<ffi.Void> data,
+  int data_size,
+);
+
+int avdevice_dev_to_app_control_message(
+  ffi.Pointer<AVFormatContext> s,
+  AVDevToAppMessageType type,
+  ffi.Pointer<ffi.Void> data,
+  int data_size,
+) => _avdevice_dev_to_app_control_message(s, type.value, data, data_size);
+
+/// List devices.
+///
+/// Returns available device names and their parameters.
+///
+/// @note: Some devices may accept system-dependent device names that cannot be
+/// autodetected. The list returned by this function cannot be assumed to
+/// be always completed.
+///
+/// @param s                device context.
+/// @param[out] device_list list of autodetected devices.
+/// @return count of autodetected devices, negative on error.
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<AVFormatContext>,
+    ffi.Pointer<ffi.Pointer<AVDeviceInfoList>>,
+  )
+>()
+external int avdevice_list_devices(
+  ffi.Pointer<AVFormatContext> s,
+  ffi.Pointer<ffi.Pointer<AVDeviceInfoList>> device_list,
+);
+
+/// Convenient function to free result of avdevice_list_devices().
+///
+/// @param device_list device list to be freed.
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Pointer<AVDeviceInfoList>>)>()
+external void avdevice_free_list_devices(
+  ffi.Pointer<ffi.Pointer<AVDeviceInfoList>> device_list,
+);
+
+/// List devices.
+///
+/// Returns available device names and their parameters.
+/// These are convenient wrappers for avdevice_list_devices().
+/// Device context is allocated and deallocated internally.
+///
+/// @param device           device format. May be NULL if device name is set.
+/// @param device_name      device name. May be NULL if device format is set.
+/// @param device_options   An AVDictionary filled with device-private options. May be NULL.
+/// The same options must be passed later to avformat_write_header() for output
+/// devices or avformat_open_input() for input devices, or at any other place
+/// that affects device-private options.
+/// @param[out] device_list list of autodetected devices
+/// @return count of autodetected devices, negative on error.
+/// @note device argument takes precedence over device_name when both are set.
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<AVInputFormat>,
+    ffi.Pointer<ffi.Char>,
+    ffi.Pointer<AVDictionary>,
+    ffi.Pointer<ffi.Pointer<AVDeviceInfoList>>,
+  )
+>()
+external int avdevice_list_input_sources(
+  ffi.Pointer<AVInputFormat> device,
+  ffi.Pointer<ffi.Char> device_name,
+  ffi.Pointer<AVDictionary> device_options,
+  ffi.Pointer<ffi.Pointer<AVDeviceInfoList>> device_list,
+);
+
+@ffi.Native<
+  ffi.Int Function(
+    ffi.Pointer<AVOutputFormat>,
+    ffi.Pointer<ffi.Char>,
+    ffi.Pointer<AVDictionary>,
+    ffi.Pointer<ffi.Pointer<AVDeviceInfoList>>,
+  )
+>()
+external int avdevice_list_output_sinks(
+  ffi.Pointer<AVOutputFormat> device,
+  ffi.Pointer<ffi.Char> device_name,
+  ffi.Pointer<AVDictionary> device_options,
+  ffi.Pointer<ffi.Pointer<AVDeviceInfoList>> device_list,
+);
+
 /// @addtogroup lavu_media Media Type
 /// @brief Media Type
 enum AVMediaType {
@@ -6009,7 +6200,7 @@ final class AVChannelCustom extends ffi.Struct {
 /// Details about which channels are present in this layout.
 /// For AV_CHANNEL_ORDER_UNSPEC, this field is undefined and must not be
 /// used.
-final class UnnamedUnion extends ffi.Union {
+final class UnnamedUnion$1 extends ffi.Union {
   /// This member must be used for AV_CHANNEL_ORDER_NATIVE, and may be used
   /// for AV_CHANNEL_ORDER_AMBISONIC to signal non-diegetic channels.
   /// It is a bitmask, where the position of each set bit means that the
@@ -6084,7 +6275,7 @@ final class AVChannelLayout extends ffi.Struct {
   @ffi.Int()
   external int nb_channels;
 
-  external UnnamedUnion u;
+  external UnnamedUnion$1 u;
 
   /// For some private data of the user.
   external ffi.Pointer<ffi.Void> opaque;
@@ -6322,7 +6513,203 @@ final class RcOverride extends ffi.Struct {
   external double quality_factor;
 }
 
-final class AVOption extends ffi.Opaque {}
+/// An option type determines:
+/// - for native access, the underlying C type of the field that an AVOption
+/// refers to;
+/// - for foreign access, the semantics of accessing the option through this API,
+/// e.g. which av_opt_get_*() and av_opt_set_*() functions can be called, or
+/// what format will av_opt_get()/av_opt_set() expect/produce.
+enum AVOptionType {
+  /// Underlying C type is unsigned int.
+  AV_OPT_TYPE_FLAGS(1),
+
+  /// Underlying C type is int.
+  AV_OPT_TYPE_INT(2),
+
+  /// Underlying C type is int64_t.
+  AV_OPT_TYPE_INT64(3),
+
+  /// Underlying C type is double.
+  AV_OPT_TYPE_DOUBLE(4),
+
+  /// Underlying C type is float.
+  AV_OPT_TYPE_FLOAT(5),
+
+  /// Underlying C type is a uint8_t* that is either NULL or points to a C
+  /// string allocated with the av_malloc() family of functions.
+  AV_OPT_TYPE_STRING(6),
+
+  /// Underlying C type is AVRational.
+  AV_OPT_TYPE_RATIONAL(7),
+
+  /// Underlying C type is a uint8_t* that is either NULL or points to an array
+  /// allocated with the av_malloc() family of functions. The pointer is
+  /// immediately followed by an int containing the array length in bytes.
+  AV_OPT_TYPE_BINARY(8),
+
+  /// Underlying C type is AVDictionary*.
+  AV_OPT_TYPE_DICT(9),
+
+  /// Underlying C type is uint64_t.
+  AV_OPT_TYPE_UINT64(10),
+
+  /// Special option type for declaring named constants. Does not correspond to
+  /// an actual field in the object, offset must be 0.
+  AV_OPT_TYPE_CONST(11),
+
+  /// Underlying C type is two consecutive integers.
+  AV_OPT_TYPE_IMAGE_SIZE(12),
+
+  /// Underlying C type is enum AVPixelFormat.
+  AV_OPT_TYPE_PIXEL_FMT(13),
+
+  /// Underlying C type is enum AVSampleFormat.
+  AV_OPT_TYPE_SAMPLE_FMT(14),
+
+  /// Underlying C type is AVRational.
+  AV_OPT_TYPE_VIDEO_RATE(15),
+
+  /// Underlying C type is int64_t.
+  AV_OPT_TYPE_DURATION(16),
+
+  /// Underlying C type is uint8_t[4].
+  AV_OPT_TYPE_COLOR(17),
+
+  /// Underlying C type is int.
+  AV_OPT_TYPE_BOOL(18),
+
+  /// Underlying C type is AVChannelLayout.
+  AV_OPT_TYPE_CHLAYOUT(19),
+
+  /// Underlying C type is unsigned int.
+  AV_OPT_TYPE_UINT(20),
+
+  /// May be combined with another regular option type to declare an array
+  /// option.
+  ///
+  /// For array options, @ref AVOption.offset should refer to a pointer
+  /// corresponding to the option type. The pointer should be immediately
+  /// followed by an unsigned int that will store the number of elements in the
+  /// array.
+  AV_OPT_TYPE_FLAG_ARRAY(65536);
+
+  final int value;
+  const AVOptionType(this.value);
+
+  static AVOptionType fromValue(int value) => switch (value) {
+    1 => AV_OPT_TYPE_FLAGS,
+    2 => AV_OPT_TYPE_INT,
+    3 => AV_OPT_TYPE_INT64,
+    4 => AV_OPT_TYPE_DOUBLE,
+    5 => AV_OPT_TYPE_FLOAT,
+    6 => AV_OPT_TYPE_STRING,
+    7 => AV_OPT_TYPE_RATIONAL,
+    8 => AV_OPT_TYPE_BINARY,
+    9 => AV_OPT_TYPE_DICT,
+    10 => AV_OPT_TYPE_UINT64,
+    11 => AV_OPT_TYPE_CONST,
+    12 => AV_OPT_TYPE_IMAGE_SIZE,
+    13 => AV_OPT_TYPE_PIXEL_FMT,
+    14 => AV_OPT_TYPE_SAMPLE_FMT,
+    15 => AV_OPT_TYPE_VIDEO_RATE,
+    16 => AV_OPT_TYPE_DURATION,
+    17 => AV_OPT_TYPE_COLOR,
+    18 => AV_OPT_TYPE_BOOL,
+    19 => AV_OPT_TYPE_CHLAYOUT,
+    20 => AV_OPT_TYPE_UINT,
+    65536 => AV_OPT_TYPE_FLAG_ARRAY,
+    _ => throw ArgumentError('Unknown value for AVOptionType: $value'),
+  };
+}
+
+/// May be set as default_val for AV_OPT_TYPE_FLAG_ARRAY options.
+final class AVOptionArrayDef extends ffi.Struct {
+  /// Native access only.
+  ///
+  /// Default value of the option, as would be serialized by av_opt_get() (i.e.
+  /// using the value of sep as the separator).
+  external ffi.Pointer<ffi.Char> def;
+
+  /// Minimum number of elements in the array. When this field is non-zero, def
+  /// must be non-NULL and contain at least this number of elements.
+  @ffi.UnsignedInt()
+  external int size_min;
+
+  /// Maximum number of elements in the array, 0 when unlimited.
+  @ffi.UnsignedInt()
+  external int size_max;
+
+  /// Separator between array elements in string representations of this
+  /// option, used by av_opt_set() and av_opt_get(). It must be a printable
+  /// ASCII character, excluding alphanumeric and the backslash. A comma is
+  /// used when sep=0.
+  ///
+  /// The separator and the backslash must be backslash-escaped in order to
+  /// appear in string representations of the option value.
+  @ffi.Char()
+  external int sep;
+}
+
+/// Native access only, except when documented otherwise.
+/// the default value for scalar options
+final class UnnamedUnion extends ffi.Union {
+  @ffi.Int64()
+  external int i64;
+
+  @ffi.Double()
+  external double dbl;
+
+  external ffi.Pointer<ffi.Char> str;
+
+  /// TODO those are unused now
+  external AVRational q;
+
+  /// Used for AV_OPT_TYPE_FLAG_ARRAY options. May be NULL.
+  ///
+  /// Foreign access to some members allowed, as noted in AVOptionArrayDef
+  /// documentation.
+  external ffi.Pointer<AVOptionArrayDef> arr;
+}
+
+/// AVOption
+final class AVOption extends ffi.Struct {
+  external ffi.Pointer<ffi.Char> name;
+
+  /// short English help text
+  /// @todo What about other languages?
+  external ffi.Pointer<ffi.Char> help;
+
+  /// Native access only.
+  ///
+  /// The offset relative to the context structure where the option
+  /// value is stored. It should be 0 for named constants.
+  @ffi.Int()
+  external int offset;
+
+  @ffi.UnsignedInt()
+  external int typeAsInt;
+
+  AVOptionType get type => AVOptionType.fromValue(typeAsInt);
+
+  external UnnamedUnion default_val;
+
+  /// < minimum valid value for the option
+  @ffi.Double()
+  external double min;
+
+  /// < maximum valid value for the option
+  @ffi.Double()
+  external double max;
+
+  /// A combination of AV_OPT_FLAG_*.
+  @ffi.Int()
+  external int flags;
+
+  /// The logical unit to which the option belongs. Non-constant
+  /// options and corresponding named constants share the same
+  /// unit. May be NULL.
+  external ffi.Pointer<ffi.Char> unit;
+}
 
 enum AVClassCategory {
   AV_CLASS_CATEGORY_NA(0),
@@ -6374,7 +6761,73 @@ enum AVClassCategory {
   };
 }
 
-final class AVOptionRanges extends ffi.Opaque {}
+/// A single allowed range of values, or a single allowed value.
+final class AVOptionRange extends ffi.Struct {
+  external ffi.Pointer<ffi.Char> str;
+
+  /// Value range.
+  /// For string ranges this represents the min/max length.
+  /// For dimensions this represents the min/max pixel count or width/height in multi-component case.
+  @ffi.Double()
+  external double value_min;
+
+  @ffi.Double()
+  external double value_max;
+
+  /// Value's component range.
+  /// For string this represents the unicode range for chars, 0-127 limits to ASCII.
+  @ffi.Double()
+  external double component_min;
+
+  @ffi.Double()
+  external double component_max;
+
+  /// Range flag.
+  /// If set to 1 the struct encodes a range, if set to 0 a single value.
+  @ffi.Int()
+  external int is_range;
+}
+
+/// List of AVOptionRange structs.
+final class AVOptionRanges extends ffi.Struct {
+  /// Array of option ranges.
+  ///
+  /// Most of option types use just one component.
+  /// Following describes multi-component option types:
+  ///
+  /// AV_OPT_TYPE_IMAGE_SIZE:
+  /// component index 0: range of pixel count (width * height).
+  /// component index 1: range of width.
+  /// component index 2: range of height.
+  ///
+  /// @note To obtain multi-component version of this structure, user must
+  /// provide AV_OPT_MULTI_COMPONENT_RANGE to av_opt_query_ranges or
+  /// av_opt_query_ranges_default function.
+  ///
+  /// Multi-component range can be read as in following example:
+  ///
+  /// @code
+  /// int range_index, component_index;
+  /// AVOptionRanges *ranges;
+  /// AVOptionRange *range[3]; //may require more than 3 in the future.
+  /// av_opt_query_ranges(&ranges, obj, key, AV_OPT_MULTI_COMPONENT_RANGE);
+  /// for (range_index = 0; range_index < ranges->nb_ranges; range_index++) {
+  /// for (component_index = 0; component_index < ranges->nb_components; component_index++)
+  /// range[component_index] = ranges->range[ranges->nb_ranges * component_index + range_index];
+  /// //do something with range here.
+  /// }
+  /// av_opt_freep_ranges(&ranges);
+  /// @endcode
+  external ffi.Pointer<ffi.Pointer<AVOptionRange>> range;
+
+  /// Number of ranges per component.
+  @ffi.Int()
+  external int nb_ranges;
+
+  /// Number of components.
+  @ffi.Int()
+  external int nb_components;
+}
 
 /// Describe the class of an AVClass context structure. That is an
 /// arbitrary struct of which the first field is a pointer to an
@@ -11100,7 +11553,7 @@ final class AVStreamGroupLCEVC extends ffi.Struct {
 }
 
 /// Group type-specific parameters
-final class UnnamedUnion$1 extends ffi.Union {
+final class UnnamedUnion$2 extends ffi.Union {
   external ffi.Pointer<AVIAMFAudioElement> iamf_audio_element;
 
   external ffi.Pointer<AVIAMFMixPresentation> iamf_mix_presentation;
@@ -11137,7 +11590,7 @@ final class AVStreamGroup extends ffi.Struct {
   AVStreamGroupParamsType get type =>
       AVStreamGroupParamsType.fromValue(typeAsInt);
 
-  external UnnamedUnion$1 params;
+  external UnnamedUnion$2 params;
 
   /// Metadata that applies to the whole group.
   ///
@@ -12528,6 +12981,235 @@ final class SwsFilter extends ffi.Struct {
   external ffi.Pointer<SwsVector> chrH;
 
   external ffi.Pointer<SwsVector> chrV;
+}
+
+final class AVDeviceRect extends ffi.Struct {
+  /// < x coordinate of top left corner
+  @ffi.Int()
+  external int x;
+
+  /// < y coordinate of top left corner
+  @ffi.Int()
+  external int y;
+
+  /// < width
+  @ffi.Int()
+  external int width;
+
+  /// < height
+  @ffi.Int()
+  external int height;
+}
+
+/// Message types used by avdevice_app_to_dev_control_message().
+enum AVAppToDevMessageType {
+  /// Dummy message.
+  AV_APP_TO_DEV_NONE(1313820229),
+
+  /// Window size change message.
+  ///
+  /// Message is sent to the device every time the application changes the size
+  /// of the window device renders to.
+  /// Message should also be sent right after window is created.
+  ///
+  /// data: AVDeviceRect: new window size.
+  AV_APP_TO_DEV_WINDOW_SIZE(1195724621),
+
+  /// Repaint request message.
+  ///
+  /// Message is sent to the device when window has to be repainted.
+  ///
+  /// data: AVDeviceRect: area required to be repainted.
+  /// NULL: whole area is required to be repainted.
+  AV_APP_TO_DEV_WINDOW_REPAINT(1380274241),
+
+  /// Request pause/play.
+  ///
+  /// Application requests pause/unpause playback.
+  /// Mostly usable with devices that have internal buffer.
+  /// By default devices are not paused.
+  ///
+  /// data: NULL
+  AV_APP_TO_DEV_PAUSE(1346458912),
+  AV_APP_TO_DEV_PLAY(1347174745),
+  AV_APP_TO_DEV_TOGGLE_PAUSE(1346458964),
+
+  /// Volume control message.
+  ///
+  /// Set volume level. It may be device-dependent if volume
+  /// is changed per stream or system wide. Per stream volume
+  /// change is expected when possible.
+  ///
+  /// data: double: new volume with range of 0.0 - 1.0.
+  AV_APP_TO_DEV_SET_VOLUME(1398165324),
+
+  /// Mute control messages.
+  ///
+  /// Change mute state. It may be device-dependent if mute status
+  /// is changed per stream or system wide. Per stream mute status
+  /// change is expected when possible.
+  ///
+  /// data: NULL.
+  AV_APP_TO_DEV_MUTE(541939028),
+  AV_APP_TO_DEV_UNMUTE(1431131476),
+  AV_APP_TO_DEV_TOGGLE_MUTE(1414354260),
+
+  /// Get volume/mute messages.
+  ///
+  /// Force the device to send AV_DEV_TO_APP_VOLUME_LEVEL_CHANGED or
+  /// AV_DEV_TO_APP_MUTE_STATE_CHANGED command respectively.
+  ///
+  /// data: NULL.
+  AV_APP_TO_DEV_GET_VOLUME(1196838732),
+  AV_APP_TO_DEV_GET_MUTE(1196250452);
+
+  final int value;
+  const AVAppToDevMessageType(this.value);
+
+  static AVAppToDevMessageType fromValue(int value) => switch (value) {
+    1313820229 => AV_APP_TO_DEV_NONE,
+    1195724621 => AV_APP_TO_DEV_WINDOW_SIZE,
+    1380274241 => AV_APP_TO_DEV_WINDOW_REPAINT,
+    1346458912 => AV_APP_TO_DEV_PAUSE,
+    1347174745 => AV_APP_TO_DEV_PLAY,
+    1346458964 => AV_APP_TO_DEV_TOGGLE_PAUSE,
+    1398165324 => AV_APP_TO_DEV_SET_VOLUME,
+    541939028 => AV_APP_TO_DEV_MUTE,
+    1431131476 => AV_APP_TO_DEV_UNMUTE,
+    1414354260 => AV_APP_TO_DEV_TOGGLE_MUTE,
+    1196838732 => AV_APP_TO_DEV_GET_VOLUME,
+    1196250452 => AV_APP_TO_DEV_GET_MUTE,
+    _ => throw ArgumentError('Unknown value for AVAppToDevMessageType: $value'),
+  };
+}
+
+/// Message types used by avdevice_dev_to_app_control_message().
+enum AVDevToAppMessageType {
+  /// Dummy message.
+  AV_DEV_TO_APP_NONE(1313820229),
+
+  /// Create window buffer message.
+  ///
+  /// Device requests to create a window buffer. Exact meaning is device-
+  /// and application-dependent. Message is sent before rendering first
+  /// frame and all one-shot initializations should be done here.
+  /// Application is allowed to ignore preferred window buffer size.
+  ///
+  /// @note: Application is obligated to inform about window buffer size
+  /// with AV_APP_TO_DEV_WINDOW_SIZE message.
+  ///
+  /// data: AVDeviceRect: preferred size of the window buffer.
+  /// NULL: no preferred size of the window buffer.
+  AV_DEV_TO_APP_CREATE_WINDOW_BUFFER(1111708229),
+
+  /// Prepare window buffer message.
+  ///
+  /// Device requests to prepare a window buffer for rendering.
+  /// Exact meaning is device- and application-dependent.
+  /// Message is sent before rendering of each frame.
+  ///
+  /// data: NULL.
+  AV_DEV_TO_APP_PREPARE_WINDOW_BUFFER(1112560197),
+
+  /// Display window buffer message.
+  ///
+  /// Device requests to display a window buffer.
+  /// Message is sent when new frame is ready to be displayed.
+  /// Usually buffers need to be swapped in handler of this message.
+  ///
+  /// data: NULL.
+  AV_DEV_TO_APP_DISPLAY_WINDOW_BUFFER(1111771475),
+
+  /// Destroy window buffer message.
+  ///
+  /// Device requests to destroy a window buffer.
+  /// Message is sent when device is about to be destroyed and window
+  /// buffer is not required anymore.
+  ///
+  /// data: NULL.
+  AV_DEV_TO_APP_DESTROY_WINDOW_BUFFER(1111770451),
+
+  /// Buffer fullness status messages.
+  ///
+  /// Device signals buffer overflow/underflow.
+  ///
+  /// data: NULL.
+  AV_DEV_TO_APP_BUFFER_OVERFLOW(1112491596),
+  AV_DEV_TO_APP_BUFFER_UNDERFLOW(1112884812),
+
+  /// Buffer readable/writable.
+  ///
+  /// Device informs that buffer is readable/writable.
+  /// When possible, device informs how many bytes can be read/write.
+  ///
+  /// @warning Device may not inform when number of bytes than can be read/write changes.
+  ///
+  /// data: int64_t: amount of bytes available to read/write.
+  /// NULL: amount of bytes available to read/write is not known.
+  AV_DEV_TO_APP_BUFFER_READABLE(1112687648),
+  AV_DEV_TO_APP_BUFFER_WRITABLE(1113018912),
+
+  /// Mute state change message.
+  ///
+  /// Device informs that mute state has changed.
+  ///
+  /// data: int: 0 for not muted state, non-zero for muted state.
+  AV_DEV_TO_APP_MUTE_STATE_CHANGED(1129141588),
+
+  /// Volume level change message.
+  ///
+  /// Device informs that volume level has changed.
+  ///
+  /// data: double: new volume with range of 0.0 - 1.0.
+  AV_DEV_TO_APP_VOLUME_LEVEL_CHANGED(1129729868);
+
+  final int value;
+  const AVDevToAppMessageType(this.value);
+
+  static AVDevToAppMessageType fromValue(int value) => switch (value) {
+    1313820229 => AV_DEV_TO_APP_NONE,
+    1111708229 => AV_DEV_TO_APP_CREATE_WINDOW_BUFFER,
+    1112560197 => AV_DEV_TO_APP_PREPARE_WINDOW_BUFFER,
+    1111771475 => AV_DEV_TO_APP_DISPLAY_WINDOW_BUFFER,
+    1111770451 => AV_DEV_TO_APP_DESTROY_WINDOW_BUFFER,
+    1112491596 => AV_DEV_TO_APP_BUFFER_OVERFLOW,
+    1112884812 => AV_DEV_TO_APP_BUFFER_UNDERFLOW,
+    1112687648 => AV_DEV_TO_APP_BUFFER_READABLE,
+    1113018912 => AV_DEV_TO_APP_BUFFER_WRITABLE,
+    1129141588 => AV_DEV_TO_APP_MUTE_STATE_CHANGED,
+    1129729868 => AV_DEV_TO_APP_VOLUME_LEVEL_CHANGED,
+    _ => throw ArgumentError('Unknown value for AVDevToAppMessageType: $value'),
+  };
+}
+
+/// Structure describes basic parameters of the device.
+final class AVDeviceInfo extends ffi.Struct {
+  /// < device name, format depends on device
+  external ffi.Pointer<ffi.Char> device_name;
+
+  /// < human friendly name
+  external ffi.Pointer<ffi.Char> device_description;
+
+  /// < array indicating what media types(s), if any, a device can provide. If null, cannot provide any
+  external ffi.Pointer<ffi.Int> media_types;
+
+  /// < length of media_types array, 0 if device cannot provide any media types
+  @ffi.Int()
+  external int nb_media_types;
+}
+
+/// List of devices.
+final class AVDeviceInfoList extends ffi.Struct {
+  /// < list of autodetected devices
+  external ffi.Pointer<ffi.Pointer<AVDeviceInfo>> devices;
+
+  /// < number of autodetected devices
+  @ffi.Int()
+  external int nb_devices;
+
+  /// < index of default device or -1 if no default
+  @ffi.Int()
+  external int default_device;
 }
 
 const int FF_LAMBDA_SHIFT = 7;

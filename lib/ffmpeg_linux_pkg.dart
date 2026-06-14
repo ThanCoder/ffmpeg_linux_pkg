@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:ffi' show DynamicLibrary;
+import 'dart:ffi'
+    show DynamicLibrary, Int, Pointer, PointerPointer, Void, nullptr, sizeOf;
 import 'dart:io';
 
 import 'package:ffi/ffi.dart';
@@ -20,6 +21,70 @@ FFmpegInstance getFfmpeg({String? customLibPath}) {
 
 class FFmpegInstance {
   const FFmpegInstance();
+
+  /// ### avcodec_get_supported_config
+  int avcodec_get_supported_config(
+    Pointer<_bindings.AVCodecContext> avctx,
+    Pointer<_bindings.AVCodec> codec,
+    _bindings.AVCodecConfig config,
+    int flags,
+    Pointer<Pointer<Void>> out_configs,
+    Pointer<Int> out_num_configs,
+  ) {
+    return _bindings.avcodec_get_supported_config(
+      avctx,
+      codec,
+      config,
+      flags,
+      out_configs,
+      out_num_configs,
+    );
+  }
+
+  // void listAllC() {
+  //   final opaquePtr = malloc.allocate<Pointer<Void>>(sizeOf<Pointer<Void>>());
+  //   opaquePtr.value = nullptr;
+
+  //   try {
+  //     while (true) {
+  //       final codecPtr = _bindings.av_muxer_iterate(opaquePtr);
+  //       if (opaquePtr.value == nullptr) break;
+  //     }
+  //   } catch (e) {
+  //   } finally {
+  //     malloc.free(opaquePtr);
+  //   }
+  // }
+
+  /// ### swresample Configuration
+  String get swresample_configuration {
+    final result = _bindings.swresample_configuration();
+    return result.cast<Utf8>().toDartString();
+  }
+
+  /// ### avformat Configuration
+  String get avformat_configuration {
+    final result = _bindings.avformat_configuration();
+    return result.cast<Utf8>().toDartString();
+  }
+
+  /// ### swscale Configuration
+  String get swscale_configuration {
+    final result = _bindings.swscale_configuration();
+    return result.cast<Utf8>().toDartString();
+  }
+
+  /// ### avcodec Configuration
+  String get avcodec_configuration {
+    final result = _bindings.avcodec_configuration();
+    return result.cast<Utf8>().toDartString();
+  }
+
+  /// ### avutil Configuration
+  String get avutil_configuration {
+    final avutil_configuration = _bindings.avutil_configuration();
+    return avutil_configuration.cast<Utf8>().toDartString();
+  }
 
   /// ### AVCodec Version
   int get avcodec_version => _bindings.avcodec_version();

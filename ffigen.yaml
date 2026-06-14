@@ -5,22 +5,24 @@ description: |
 
   Regenerate bindings with `dart run ffigen --config ffigen.yaml`.
 compiler-opts:
-  - "-I/home/thancoder/projects/plugins/ffmpeg_linux_pkg/src/include"
+  - "-I/home/thancoder/projects/plugins/ffmpeg_linux_pkg/src/ffmpeg_cpp_wrapper/include"
 
 output: "lib/ffmpeg_linux_pkg_bindings_generated.dart"
 headers:
   entry-points:
-    - "src/include/libavcodec/avcodec.h"
-    - "src/include/libavformat/avformat.h"
-    - "src/include/libavutil/avutil.h"
-    - "src/include/libswresample/swresample.h"
-    - "src/include/libswscale/swscale.h"
+    - "src/ffmpeg_cpp_wrapper/include/libavcodec/avcodec.h"
+    - "src/ffmpeg_cpp_wrapper/include/libavformat/avformat.h"
+    - "src/ffmpeg_cpp_wrapper/include/libavutil/avutil.h"
+    - "src/ffmpeg_cpp_wrapper/include/libswresample/swresample.h"
+    - "src/ffmpeg_cpp_wrapper/include/libswscale/swscale.h"
+    - "src/ffmpeg_cpp_wrapper/include/libavdevice/avdevice.h"
   include-directives:
-    - "src/include/libavcodec/avcodec.h"
-    - "src/include/libavformat/avformat.h"
-    - "src/include/libavutil/avutil.h"
-    - "src/include/libswresample/swresample.h"
-    - "src/include/libswscale/swscale.h"
+    - "src/ffmpeg_cpp_wrapper/include/libavcodec/avcodec.h"
+    - "src/ffmpeg_cpp_wrapper/include/libavformat/avformat.h"
+    - "src/ffmpeg_cpp_wrapper/include/libavutil/avutil.h"
+    - "src/ffmpeg_cpp_wrapper/include/libswresample/swresample.h"
+    - "src/ffmpeg_cpp_wrapper/include/libswscale/swscale.h"
+    - "src/ffmpeg_cpp_wrapper/include/libavdevice/avdevice.h"
 
 ffi-native:
 comments:

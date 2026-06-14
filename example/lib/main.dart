@@ -4,7 +4,7 @@ import 'package:ffmpeg_linux_pkg/ffmpeg_linux_pkg.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MaterialApp(home: const MyApp()));
+  runApp(MaterialApp(theme: ThemeData.dark(), home: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -20,11 +20,10 @@ class MyApp extends StatelessWidget {
             final ff = getFfmpeg();
 
             print('av_version_info: ${ff.av_version_info}');
-            print('avcodec_version: ${ff.avcodec_version}');
-            print('avformat_version: ${ff.avformat_version}');
-            print('avutil_version: ${ff.avutil_version}');
-            print('swresample_version: ${ff.swresample_version}');
-            print('swscale_version: ${ff.swscale_version}');
+            print('avformat_configuration: ${ff.avformat_configuration}');
+            print('avutil_configuration: ${ff.avutil_configuration}');
+            print('avcodec_configuration: ${ff.avcodec_configuration}');
+            print('swresample_configuration: ${ff.swresample_configuration}');
           } catch (e) {
             print(e);
           }
