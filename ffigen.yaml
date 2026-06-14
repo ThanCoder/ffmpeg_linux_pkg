@@ -1,0 +1,28 @@
+# Run with `dart run ffigen --config ffigen.yaml`.
+name: FfmpegLinuxPkgBindings
+description: |
+  Bindings for `src/ffmpeg_linux_pkg.h`.
+
+  Regenerate bindings with `dart run ffigen --config ffigen.yaml`.
+compiler-opts:
+  - "-I/home/thancoder/projects/plugins/ffmpeg_linux_pkg/src/include"
+
+output: "lib/ffmpeg_linux_pkg_bindings_generated.dart"
+headers:
+  entry-points:
+    - "src/include/libavcodec/avcodec.h"
+    - "src/include/libavformat/avformat.h"
+    - "src/include/libavutil/avutil.h"
+    - "src/include/libswresample/swresample.h"
+    - "src/include/libswscale/swscale.h"
+  include-directives:
+    - "src/include/libavcodec/avcodec.h"
+    - "src/include/libavformat/avformat.h"
+    - "src/include/libavutil/avutil.h"
+    - "src/include/libswresample/swresample.h"
+    - "src/include/libswscale/swscale.h"
+
+ffi-native:
+comments:
+  style: any
+  length: full
