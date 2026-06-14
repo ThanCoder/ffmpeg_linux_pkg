@@ -1,7 +1,7 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: no_leading_underscores_for_library_prefixes, non_constant_identifier_names
 
 import 'dart:ffi'
-    show DynamicLibrary, Int, Pointer, PointerPointer, Void, nullptr, sizeOf;
+    show DynamicLibrary, Int, Pointer, Void;
 import 'dart:io';
 
 import 'package:ffi/ffi.dart';
